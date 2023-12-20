@@ -23,11 +23,13 @@ public class FlightController implements CRUDController<FlightDTO, FlightSaveReq
     public ResponseEntity<Result> add(@RequestBody FlightSaveRequestDTO flightSaveRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(flightService.add(flightSaveRequestDTO));
     }
+
     @GetMapping("/getAll")
     @Override
     public ResponseEntity<DataResult<List<FlightDTO>>> getAll() {
         return ResponseEntity.status(HttpStatus.OK).body(flightService.getAll());
     }
+
     @GetMapping("/getById")
     @Override
     public ResponseEntity<DataResult<FlightDTO>> getById(@RequestParam Long id) {
@@ -39,6 +41,7 @@ public class FlightController implements CRUDController<FlightDTO, FlightSaveReq
     public ResponseEntity<Result> updateById(@RequestBody FlightDTO entityResponseDto) {
         return ResponseEntity.status(HttpStatus.OK).body(flightService.updateById(entityResponseDto));
     }
+
     @DeleteMapping("/deleteById")
     @Override
     public ResponseEntity<DataResult<FlightDTO>> deleteById(@RequestParam Long id) {

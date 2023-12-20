@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class FlightManager  implements FlightService {
+public class FlightManager implements FlightService {
     @Override
     public Result add(FlightSaveRequestDTO flightSaveRequestDTO) {
         return null;
