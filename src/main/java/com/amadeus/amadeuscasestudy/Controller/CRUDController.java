@@ -1,7 +1,6 @@
 package com.amadeus.amadeuscasestudy.Controller;
 
 
-
 import com.amadeus.amadeuscasestudy.Core.Result.DataResult;
 import com.amadeus.amadeuscasestudy.Core.Result.Result;
 import org.springframework.http.ResponseEntity;
