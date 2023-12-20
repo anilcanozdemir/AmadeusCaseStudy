@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * DTO for {@link AirportRequestDTO}
+ * DTO for {@link com.amadeus.amadeuscasestudy.Entity.Airport}
  */
 @Value
 public class AirportSaveRequestDTO implements Serializable {
