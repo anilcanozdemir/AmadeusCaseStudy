@@ -9,6 +9,8 @@ import com.amadeus.amadeuscasestudy.Repository.AirportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @Component
 @RequiredArgsConstructor
 public class FlightMapper implements MapperProfile<FlightDTO, FlightSaveRequestDTO, Flight> {
@@ -16,24 +18,30 @@ public class FlightMapper implements MapperProfile<FlightDTO, FlightSaveRequestD
     private AirportRepository airportRepository;
 
     @Override
-    public FlightDTO EntityToDTO(Flight flight) {
+    public FlightDTO entityToDTO(Flight flight) {
 
-        return new FlightDTO(flight.getId(),
-                airportMapper.EntityToDTO(flight.getArrivalAirport()),
-                airportMapper.EntityToDTO(flight.getDepartureAirport()),
-                flight.getArrivalDate(),flight.getDepartureDate(),flight.getPrice());
+        return new FlightDTO(flight.getId(), flight.getArrivalAirport().getId(),
+                flight.getDepartureAirport().getId(),
+                flight.getArrivalDate(), flight.getDepartureDate(), flight.getPrice());
     }
+
 
     @Override
     public Flight saveRequestDtoToEntity(FlightSaveRequestDTO flightSaveRequestDTO) {
         Flight flight = new Flight();
-        flight.setPrice(flightSaveRequestDTO.getPrice());
-        flight.setArrivalDate(flightSaveRequestDTO.getArrivalDate());
-        flight.setDepartureDate(flightSaveRequestDTO.getDepartureDate());
-        flight.setArrivalAirport(airportRepository.findById(flightSaveRequestDTO.getArrivalAirport().getId()).
-                orElseThrow(() -> new AirportNotFoundException(flightSaveRequestDTO.getArrivalAirport().getId())));
-        flight.setDepartureAirport(airportRepository.findById(flightSaveRequestDTO.getDepartureAirport().getId()).
-                orElseThrow(() -> new AirportNotFoundException(flightSaveRequestDTO.getDepartureAirport().getId())));
+        return getFlight(flight, flightSaveRequestDTO.getPrice(), flightSaveRequestDTO.getArrivalDate(),
+                flightSaveRequestDTO.getDepartureDate(), flightSaveRequestDTO.getArrivalAirportId(),
+                flightSaveRequestDTO.getDepartureAirportId());
+    }
+
+    private Flight getFlight(Flight flight, Double price, Date arrivalDate, Date departureDate, Long arrivalAirportId, Long departureAirportId) {
+        flight.setPrice(price);
+        flight.setArrivalDate(arrivalDate);
+        flight.setDepartureDate(departureDate);
+        flight.setArrivalAirport(airportRepository.findById(arrivalAirportId).
+                orElseThrow(() -> new AirportNotFoundException(arrivalAirportId)));
+        flight.setDepartureAirport(airportRepository.findById(departureAirportId).
+                orElseThrow(() -> new AirportNotFoundException(departureAirportId)));
 
         return flight;
     }
@@ -42,15 +50,8 @@ public class FlightMapper implements MapperProfile<FlightDTO, FlightSaveRequestD
     public Flight DTOtoEntity(FlightDTO updateRequestDto) {
         Flight flight = new Flight();
         flight.setId(updateRequestDto.getId());
-        flight.setPrice(updateRequestDto.getPrice());
-        flight.setArrivalDate(updateRequestDto.getArrivalDate());
-        flight.setDepartureDate(updateRequestDto.getDepartureDate());
-        flight.setArrivalAirport(airportRepository.findById(updateRequestDto.getArrivalAirport().getId()).
-                orElseThrow(() -> new AirportNotFoundException(updateRequestDto.getArrivalAirport().getId())));
-        flight.setDepartureAirport(airportRepository.findById(updateRequestDto.getDepartureAirport().getId()).
-                orElseThrow(() -> new AirportNotFoundException(updateRequestDto.getDepartureAirport().getId())));
-
-
-        return flight;
+        return getFlight(flight, updateRequestDto.getPrice(), updateRequestDto.getArrivalDate(),
+                updateRequestDto.getDepartureDate(),
+                updateRequestDto.getArrivalAirportId(), updateRequestDto.getDepartureAirportId());
     }
 }

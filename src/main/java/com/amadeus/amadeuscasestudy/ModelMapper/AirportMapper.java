@@ -13,7 +13,7 @@ public class AirportMapper implements MapperProfile<AirportDTO, AirportSaveReque
 
 
     @Override
-    public AirportDTO EntityToDTO(Airport airport) {
+    public AirportDTO entityToDTO(Airport airport) {
         return new AirportDTO(airport.getId(),airport.getCityName());
 
     }

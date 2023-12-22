@@ -1,6 +1,5 @@
 package com.amadeus.amadeuscasestudy.DTO.Flight;
 
-import com.amadeus.amadeuscasestudy.DTO.Airport.AirportDTO;
 import lombok.Value;
 
 import javax.validation.constraints.FutureOrPresent;
@@ -18,9 +17,9 @@ public class FlightDTO implements Serializable {
     @Positive(message = "id must be positive")
     Long id;
     @NotNull(message = "arrivalAirport must be not null.")
-    AirportDTO arrivalAirport;
+    Long arrivalAirportId;
     @NotNull(message = "departureAirport must be not null.")
-    AirportDTO departureAirport;
+    Long departureAirportId;
     @NotNull(message = "arrivalDate must be not null")
     @FutureOrPresent(message = "arrivalDate must be in future or present.")
     Date arrivalDate;
