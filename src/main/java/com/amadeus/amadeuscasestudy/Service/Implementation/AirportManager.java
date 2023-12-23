@@ -13,6 +13,7 @@ import com.amadeus.amadeuscasestudy.ModelMapper.AirportMapper;
 import com.amadeus.amadeuscasestudy.Repository.AirportRepository;
 import com.amadeus.amadeuscasestudy.Service.Contract.AirportService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,7 +22,10 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AirportManager implements AirportService {
+    @Autowired
     private AirportMapper airportMapper;
+    @Autowired
+
     private AirportRepository airportRepository;
 
     @Override
