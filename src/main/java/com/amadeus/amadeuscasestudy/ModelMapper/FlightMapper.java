@@ -7,6 +7,7 @@ import com.amadeus.amadeuscasestudy.DTO.Flight.FlightSaveRequestDTO;
 import com.amadeus.amadeuscasestudy.Entity.Flight;
 import com.amadeus.amadeuscasestudy.Repository.AirportRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -14,7 +15,7 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 public class FlightMapper implements MapperProfile<FlightDTO, FlightSaveRequestDTO, Flight> {
-    private AirportMapper airportMapper;
+    @Autowired
     private AirportRepository airportRepository;
 
     @Override

@@ -6,6 +6,7 @@ import com.amadeus.amadeuscasestudy.DTO.Airport.AirportDTO;
 import com.amadeus.amadeuscasestudy.DTO.Airport.AirportSaveRequestDTO;
 import com.amadeus.amadeuscasestudy.Service.Contract.AirportService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/airport")
 @RequiredArgsConstructor
 public class AirportController implements CRUDController<AirportDTO, AirportSaveRequestDTO> {
+    @Autowired
     private AirportService airportService;
 
     @Override
@@ -48,4 +50,5 @@ public class AirportController implements CRUDController<AirportDTO, AirportSave
     public ResponseEntity<DataResult<AirportDTO>> deleteById(@RequestParam Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(airportService.deleteById(id));
     }
+
 }

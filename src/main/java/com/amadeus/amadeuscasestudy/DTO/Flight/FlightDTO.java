@@ -16,9 +16,11 @@ public class FlightDTO implements Serializable {
     @NotNull(message = "id must be not null")
     @Positive(message = "id must be positive")
     Long id;
-    @NotNull(message = "arrivalAirport must be not null.")
+    @NotNull(message = "arrivalAirportId must be not null.")
+    @Positive(message = "arrivalAirportId must be positive")
     Long arrivalAirportId;
-    @NotNull(message = "departureAirport must be not null.")
+    @NotNull(message = "departureAirportId must be not null.")
+    @Positive(message = "departureAirportId must be positive")
     Long departureAirportId;
     @NotNull(message = "arrivalDate must be not null")
     @FutureOrPresent(message = "arrivalDate must be in future or present.")

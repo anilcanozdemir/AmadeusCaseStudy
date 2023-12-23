@@ -2,12 +2,10 @@ package com.amadeus.amadeuscasestudy.Service.Implementation;
 
 import com.amadeus.amadeuscasestudy.Core.Exception.FlightListEmptyException;
 import com.amadeus.amadeuscasestudy.Core.Exception.FlightNotFoundException;
-import com.amadeus.amadeuscasestudy.Core.Result.DataResult;
-import com.amadeus.amadeuscasestudy.Core.Result.Result;
-import com.amadeus.amadeuscasestudy.Core.Result.SuccessDataResult;
-import com.amadeus.amadeuscasestudy.Core.Result.SuccessResult;
+import com.amadeus.amadeuscasestudy.Core.Result.*;
 import com.amadeus.amadeuscasestudy.DTO.Flight.FlightDTO;
 import com.amadeus.amadeuscasestudy.DTO.Flight.FlightSaveRequestDTO;
+import com.amadeus.amadeuscasestudy.DTO.Flight.FlightSearchResponseListDto;
 import com.amadeus.amadeuscasestudy.Entity.Flight;
 import com.amadeus.amadeuscasestudy.ModelMapper.FlightMapper;
 import com.amadeus.amadeuscasestudy.Repository.FlightRepository;
@@ -16,22 +14,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @Service
 @RequiredArgsConstructor
 public class FlightManager implements FlightService {
+    @Autowired
     private FlightMapper flightMapper;
+    @Autowired
     private FlightRepository flightRepository;
     @Override
     public Result add(FlightSaveRequestDTO flightSaveRequestDTO) {
@@ -86,7 +85,7 @@ public class FlightManager implements FlightService {
         wireMockServer.start();
 
         // Mock API endpoint ve cevabını tanımlama
-        configureFor("localhost", 8080);
+        configureFor("localhost", 9090);
         stubFor(get(urlEqualTo("/api/flight"))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -143,4 +142,51 @@ public class FlightManager implements FlightService {
 
         wireMockServer.stop();
     }
+
+    @Override
+    public DataResult<FlightSearchResponseListDto> search(Long departureAirportId, Long arrivalAirportId, Date departureDate, Date returnDate) {
+        List<Flight> departureFlightList = getByDate(
+                departureAirportId, arrivalAirportId, departureDate);
+        List<Flight> returningFlightList = getByDate(
+                arrivalAirportId, departureAirportId, returnDate);
+        if (returningFlightList.isEmpty() && departureFlightList.isEmpty())
+            throw new FlightListEmptyException("FlightLists are empty.");
+        else if (returningFlightList.isEmpty())
+            return new ErrorDataResult<>("returningFlight is empty."
+                    , new FlightSearchResponseListDto(new ArrayList<>(), departureFlightList.stream().map(flightMapper::entityToDTO).toList())
+            );
+        else if (departureFlightList.isEmpty())
+            return new ErrorDataResult<>("departureFlightList is empty."
+                    , new FlightSearchResponseListDto(returningFlightList.stream().map(flightMapper::entityToDTO).toList(), new ArrayList<>())
+            );
+
+        return new SuccessDataResult<>("FlightSearchResponseLists successfully called."
+                , new FlightSearchResponseListDto(returningFlightList.stream().map(flightMapper::entityToDTO).toList()
+                , departureFlightList.stream().map(flightMapper::entityToDTO).toList())
+        );
+    }
+
+    @Override
+    public DataResult<List<FlightDTO>> search(Long departureAirportId, Long arrivalAirportId, Date departureDate) {
+        List<Flight> departureFlightList = getByDate(
+                departureAirportId, arrivalAirportId, departureDate);
+        return new SuccessDataResult<>("FlightList successfully called.",
+                departureFlightList.stream()
+                        .map(flightMapper::entityToDTO)
+                        .toList());
+    }
+
+    private List<Flight> getByDate(Long departureAirportId, Long arrivalAirportId, Date departureDate) {
+        return this.flightRepository
+                .findByArrivalAirport_IdAndDepartureAirport_IdAndDepartureDateBetween(
+                        departureAirportId, arrivalAirportId, departureDate, addDay(departureDate));
+
+    }
+    private Date addDay(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, 1); //minus number would decrement the days
+        return cal.getTime();
+    }
+
 }
