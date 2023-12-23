@@ -20,4 +20,8 @@ public class ExceptionHandlerConfig {
     public ResponseEntity<ErrorResult> handleEntityListEmptyException(EntityNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResult(exception.getMessage()));
     }
+    @ExceptionHandler({Exception.class})
+    public ResponseEntity<ErrorResult> handleEntityListEmptyException(Exception exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResult(exception.getMessage()));
+    }
 }
