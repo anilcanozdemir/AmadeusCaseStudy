@@ -14,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -38,6 +37,9 @@ public class SpringSecurityConfig {
                     authorize.antMatchers("/v3/**", "/swagger-ui/**").permitAll();
                     authorize.antMatchers(HttpMethod.POST, "/airport/**").hasRole("ADMIN");
                     authorize.antMatchers(HttpMethod.POST, "/flight/**").hasRole("ADMIN");
+                    authorize.antMatchers(HttpMethod.DELETE, "/airport/**").hasRole("ADMIN");
+                    authorize.antMatchers(HttpMethod.DELETE, "/flight/**").hasRole("ADMIN");
+
                 })
 
 

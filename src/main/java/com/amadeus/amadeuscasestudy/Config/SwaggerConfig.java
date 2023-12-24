@@ -5,8 +5,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+
+import java.util.Collections;
 
 @Configuration
 public class SwaggerConfig {
@@ -17,6 +21,16 @@ public class SwaggerConfig {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.amadeus.amadeuscasestudy.Controller"))
                 .paths(PathSelectors.any())
-                .build();
+                .build().apiInfo(apiInfo());
+    }
+
+    private ApiInfo apiInfo() {
+        return new ApiInfo(
+                "Flight Search API",
+                "AMADEUS Flight Search Case Study API.",
+                "1.0",
+                "Terms of service",
+                new Contact("ANIL CAN ÖZDEMİR", "https://www.linkedin.com/in/anilcanozdemir/", "anilcanozdemir1020@gmail.com"),
+                "Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0", Collections.emptyList());
     }
 }

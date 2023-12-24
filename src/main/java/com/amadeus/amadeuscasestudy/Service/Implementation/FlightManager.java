@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -32,6 +34,7 @@ public class FlightManager implements FlightService {
     private FlightMapper flightMapper;
     @Autowired
     private FlightRepository flightRepository;
+
     @Override
     public Result add(FlightSaveRequestDTO flightSaveRequestDTO) {
         Flight savedFlight = this.flightRepository.save(flightMapper.saveRequestDtoToEntity(flightSaveRequestDTO));
@@ -79,13 +82,15 @@ public class FlightManager implements FlightService {
     }
 
     @Override
+    @Scheduled(cron = "@daily")
+    @Async
     public void getFlightListFromExternalServiceByDaily() throws Exception {
         System.out.print("called external api call." + new Date());
         WireMockServer wireMockServer = new WireMockServer();
         wireMockServer.start();
 
         // Mock API endpoint ve cevabını tanımlama
-        configureFor("localhost", 9090);
+        configureFor("localhost", 8080);
         stubFor(get(urlEqualTo("/api/flight"))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -170,6 +175,8 @@ public class FlightManager implements FlightService {
     public DataResult<List<FlightDTO>> search(Long departureAirportId, Long arrivalAirportId, Date departureDate) {
         List<Flight> departureFlightList = getByDate(
                 departureAirportId, arrivalAirportId, departureDate);
+        if (departureFlightList.isEmpty())
+            throw new FlightListEmptyException("FlightLists are empty.");
         return new SuccessDataResult<>("FlightList successfully called.",
                 departureFlightList.stream()
                         .map(flightMapper::entityToDTO)
@@ -182,6 +189,7 @@ public class FlightManager implements FlightService {
                         departureAirportId, arrivalAirportId, departureDate, addDay(departureDate));
 
     }
+
     private Date addDay(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);

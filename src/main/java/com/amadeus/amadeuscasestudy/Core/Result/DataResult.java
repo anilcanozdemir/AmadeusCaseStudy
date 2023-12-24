@@ -1,9 +1,14 @@
 package com.amadeus.amadeuscasestudy.Core.Result;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+@ApiModel(description = "Wrapping class for all DTOs and datas for to be returned as result endpoints.")
 public abstract class DataResult<Data> extends Result {
 
-
+    @ApiModelProperty(
+            value = "Result data of the request.",
+            name = "data")
     private Data data;
 
     public DataResult(boolean success) {
